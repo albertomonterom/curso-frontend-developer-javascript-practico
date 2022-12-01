@@ -1,31 +1,52 @@
 const menuEmail = document.querySelector('.navbar-email');
 const menuHamIcon = document.querySelector('.menu');
 const menuCarritoIcon = document.querySelector('.navbar-shopping-cart');
+const productDetailAsideIcon = document.querySelector('.product-detail-close-secondary');
 const desktopMenu = document.querySelector('.desktop-menu');
 const mobileMenu = document.querySelector('.mobile-menu');
 const aside = document.querySelector('.product-detail');
+const asideSecondary = document.querySelector('.product-detail-secondary');
 const cardsContainer = document.querySelector('.cards-container');
-
 
 
 menuEmail.addEventListener('click', toggleDesktopMenu);
 menuHamIcon.addEventListener('click', toggleMobilepMenu);
 menuCarritoIcon.addEventListener('click', toggleCarritoAside);
+productDetailAsideIcon.addEventListener('click', closeProductDetailAside);
+
 
 function toggleDesktopMenu(){
     desktopMenu.classList.toggle('inactive');
     aside.classList.add('inactive');
+    asideSecondary.classList.add('inactive');
 }
 function toggleMobilepMenu(){
     mobileMenu.classList.toggle('inactive');
     // Al utilizar los métodos .add() o .remove(), en el caso de que se añada una clase CSS que ya existía previamente, o que se elimine una clase CSS que no existía, simplemente no ocurrirá nada.
     aside.classList.add('inactive');
+    asideSecondary.classList.add('inactive');
 }
 function toggleCarritoAside(){
     aside.classList.toggle('inactive');
     // Al utilizar los métodos .add() o .remove(), en el caso de que se añada una clase CSS que ya existía previamente, o que se elimine una clase CSS que no existía, simplemente no ocurrirá nada.
     mobileMenu.classList.add('inactive');
     desktopMenu.classList.add('inactive');
+    asideSecondary.classList.add('inactive');
+}
+function openProductDetailAside(product){
+    asideSecondary.classList.remove('inactive');
+    const productImg = document.querySelector('.product-img-secondary');
+    const productPrice = document.querySelector('.product-price-secondary');
+    const productName = document.querySelector('.product-name-secondary');
+    productImg.setAttribute('src', product.image);
+    productPrice.textContent = `$${product.price}`;
+    productName.textContent = `${product.name}`;
+}
+function closeProductDetailAside(){
+    aside.classList.add('inactive');
+    mobileMenu.classList.add('inactive');
+    desktopMenu.classList.add('inactive');
+    asideSecondary.classList.add('inactive');
 }
 
 const  productList = [];
@@ -69,26 +90,27 @@ productList.push({
     </div>
 </div> 
 */
-
 function renderProducts(arr){
-    for(product of arr){
+    //Con el loop 'for of' no se podría ya que al finalizar la construcción de elementos estaría usando el último valor como argumento de la función, forEach recorre cada elemento de cada arreglo extrayendo los datos que desee de cada uno sin ningun problema 
+    arr.forEach(product => {
         //Creamos elementos
-    
         //Aquí creamos un elemento div y lo guardamos en una variable llamada 'productCard'
         const productCard = document.createElement('div');
         //Accedemos al objeto classList y agregamos una clase llamada 'product-card'
         productCard.classList.add('product-card');
-    
         //Creamos un elemento img y lo almacenamos en 'img'
         const productImg = document.createElement('img');
         //Modificamos su atributo 'src' y le asignamos el link de la imagen
         productImg.setAttribute('src', product.image);
-    
+        productImg.addEventListener('click', () => {
+            openProductDetailAside(product);
+        });
+        productImg.style.cursor = 'pointer';
         //Creamos un elemento div y lo almacenamos en 'productInfo'
         const productInfo = document.createElement('div');
         //Accedemos al objeto classList y agregamos una clase llamada 'product-info'
         productInfo.classList.add('product-info');
-    
+
         //Creamos un elemento div y lo almacenamos en la variable 'productInfoDiv'
         const productInfoDiv = document.createElement('div');
         //Creamos un elemento párrafo
@@ -99,7 +121,7 @@ function renderProducts(arr){
         productName.textContent = product.name;
         productInfoDiv.appendChild(productPrice);
         productInfoDiv.appendChild(productName);
-    
+
         //Creamos un elemento de tipo figure y lo almacenamos en una variable
         const productInfoFigure = document.createElement('figure');
         //Creamos un elemento de tipo imagen y lo almacenamos en la variable card
@@ -108,19 +130,19 @@ function renderProducts(arr){
         card.setAttribute('src', './icons/bt_add_to_cart.svg');
         //Agregamos el elemento imagen como hijo al elemento figure
         productInfoFigure.appendChild(card);
-    
+
         //Agregamos un hijo al div productoInfo
         productInfo.appendChild(productInfoDiv);
         //Inserta un elemento hijo al final de productInfoDiv
         productInfo.appendChild(productInfoFigure);
-    
+
         //Insertamos un elemento hijo a productCard
         productCard.appendChild(productImg);
         //Insertamos un elemento hijo al final de productImg
         productCard.appendChild(productInfo);
-    
+
         //AHORA SÍ, INSERTAMOS LO QUE HEMOS CREADO A UNA PARTE ESPECÍFICA DEL CÓDIGO HTML
-        cardsContainer.appendChild(productCard);
-    }
+        cardsContainer.appendChild(productCard); 
+    });
 }
 renderProducts(productList);
