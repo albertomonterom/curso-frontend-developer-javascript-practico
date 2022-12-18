@@ -16,6 +16,9 @@ body {
 .inactive{
     display: none;
 }
+.darken{
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
 /* Navbar (general) */
 nav {
@@ -162,7 +165,7 @@ nav {
 /* Aside: Lista de productos */
 .product-detail {
   background-color: var(--white);
-  width: 360px;
+  width: 400px;
   padding: 0 24px;
   box-sizing: border-box;
   position: absolute;
@@ -221,6 +224,10 @@ nav {
   color: var(--very-light-pink);
 }
 .shopping-cart p:nth-child(3) {
+  font-size: var(--md);
+  font-weight: bold;
+}
+.shopping-cart p:nth-child(4) {
   font-size: var(--md);
   font-weight: bold;
 }
@@ -344,7 +351,6 @@ nav {
   margin-bottom: 0;
   color: var(--very-light-pink);
 }
-
 
 @media (max-width: 640px) {
   .menu {

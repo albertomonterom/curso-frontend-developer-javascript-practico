@@ -7,14 +7,116 @@ const mobileMenu = document.querySelector('.mobile-menu');
 const aside = document.querySelector('.product-detail');
 const asideSecondary = document.querySelector('.product-detail-secondary');
 const cardsContainer = document.querySelector('.cards-container');
+const itemsCarrito = document.querySelector('.items-carrito');
+const countTotalCarrito = document.querySelector('.count-total-carrito');
+let articulosCarrito = [];
 
+eventsListeners();
+function eventsListeners(){
+    document.addEventListener('click', carritoHTML);
+    menuEmail.addEventListener('click', toggleDesktopMenu);
+    menuHamIcon.addEventListener('click', toggleMobilepMenu);
+    menuCarritoIcon.addEventListener('click', toggleCarritoAside);
+    productDetailAsideIcon.addEventListener('click', closeProductDetailAside);
+    aside.addEventListener('click', eliminarItem);
+}
 
-menuEmail.addEventListener('click', toggleDesktopMenu);
-menuHamIcon.addEventListener('click', toggleMobilepMenu);
-menuCarritoIcon.addEventListener('click', toggleCarritoAside);
-productDetailAsideIcon.addEventListener('click', closeProductDetailAside);
+//Detectar click en la imagen de carrito
+function carritoHTML(e){
+    if(e.target.classList.contains('agregar-carrito')){
+        const itemSeleccionado = e.target.parentElement.parentElement.parentElement;
+        leerDatosItem(itemSeleccionado);
+    }
+}
+function eliminarItem(e){
+    if(e.target.classList.contains('borrar-item')){
+        const articulo = e.target.parentElement;
+        if(Number(articulo.children[3].textContent) > 1){
+            let items = articulosCarrito.map(articulo => {
+                if(articulo.count > 1){
+                    articulo.count = articulo.count - 1;
+                    return articulo;
+                }else{
+                    return articulo;
+                }
+            });
+            articulosCarrito = [...items];
+        }else{
+            let items = articulosCarrito.filter(item => {
+                return item.title !== articulo.children[1].textContent;
+            });
+            articulosCarrito = [...items];
+        }
+        showItemsCarrito();
+    }
+}
+function leerDatosItem(item){
+    const objItem = {
+        image: item.querySelector('img').src,
+        price: item.querySelector('.price').textContent,
+        title: item.querySelector('.title').textContent,
+        count: 1
+    }
+    //Revisar si un elemento ya existe en el carrito
+    const existe = articulosCarrito.some(item => item.title === objItem.title);
 
+    if(existe){
+        //Identificar el elemento duplicado y actualizar el contador
+        const items = articulosCarrito.map(item => {
+            if(item.title === objItem.title){
+                item.count++;
+                return item;
+            }else{
+                return item;
+            }
+        });
+        articulosCarrito = [...items];
+    }else{
+        //Si no hay items duplicados que se inserte en el array
+        articulosCarrito.push(objItem);   
+    }
+    showItemsCarrito();
+}
+//Mostrar los productos en HTML
+function showItemsCarrito(){
+    itemsCarrito.innerHTML = '';
+    // <div class="shopping-cart">
+    //     <figure>
+    //         <img src="https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="bike">
+    //     </figure>
+    //     <p>Bike</p>
+    //     <p>$30,00</p>
+    //     <p>1</p>
+    //     <img src="./icons/icon_close.png" alt="close">
+    // </div>
+    articulosCarrito.forEach(item => {
+        const div = document.createElement('div');
+        div.classList.add('shopping-cart');
+        const figure = document.createElement('figure');
+        const img = document.createElement('img');
+        img.setAttribute('src', item.image);
+        img.setAttribute('alt', item.title);
+        figure.appendChild(img);
+        const pTitle = document.createElement('p');
+        pTitle.textContent = item.title;
+        const pPrice = document.createElement('p');
+        pPrice.textContent = item.price;
+        const count = document.createElement('p');
+        count.textContent = `${item.count}`;
+        const icon = document.createElement('img');
+        icon.setAttribute('src', './icons/icon_close.png');
+        icon.setAttribute('alt', 'close');
+        icon.setAttribute('style', 'cursor: pointer;');
+        icon.classList.add('borrar-item');
+        div.appendChild(figure);
+        div.appendChild(pTitle);
+        div.appendChild(pPrice);
+        div.appendChild(count);
+        div.appendChild(icon);
 
+        itemsCarrito.appendChild(div);
+    });
+}
 function toggleDesktopMenu(){
     desktopMenu.classList.toggle('inactive');
     aside.classList.add('inactive');
@@ -41,6 +143,9 @@ function openProductDetailAside(product){
     productImg.setAttribute('src', product.image);
     productPrice.textContent = `$${product.price}`;
     productName.textContent = `${product.name}`;
+}
+function openProductCartAside(product){
+    console.log(product)
 }
 function closeProductDetailAside(){
     aside.classList.add('inactive');
@@ -91,6 +196,7 @@ productList.push({
 </div> 
 */
 function renderProducts(arr){
+    let i = 0;
     //Con el loop 'for of' no se podría ya que al finalizar la construcción de elementos estaría usando el último valor como argumento de la función, forEach recorre cada elemento de cada arreglo extrayendo los datos que desee de cada uno sin ningun problema 
     arr.forEach(product => {
         //Creamos elementos
@@ -116,8 +222,10 @@ function renderProducts(arr){
         //Creamos un elemento párrafo
         const productPrice = document.createElement('p');
         productPrice.textContent = '$' + product.price; 
+        productPrice.classList.add('price');
         //Creamos otro elemento de tipo párrafo
         const productName = document.createElement('p');
+        productName.classList.add('title');
         productName.textContent = product.name;
         productInfoDiv.appendChild(productPrice);
         productInfoDiv.appendChild(productName);
@@ -128,6 +236,12 @@ function renderProducts(arr){
         const card = document.createElement('img');
         //Modificamos su atributo src y le asignamos el link de ese icon
         card.setAttribute('src', './icons/bt_add_to_cart.svg');
+        //Agregamos clase a card
+        card.classList.add('agregar-carrito');
+
+        //Agregamos tipo de cursor a card
+        card.style.cursor = 'pointer';
+
         //Agregamos el elemento imagen como hijo al elemento figure
         productInfoFigure.appendChild(card);
 
