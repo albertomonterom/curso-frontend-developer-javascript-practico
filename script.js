@@ -32,15 +32,15 @@ function eliminarItem(e){
     if(e.target.classList.contains('borrar-item')){
         const articulo = e.target.parentElement;
         if(Number(articulo.children[3].textContent) > 1){
-            let items = articulosCarrito.map(articulo => {
-                if(articulo.count > 1){
-                    articulo.count = articulo.count - 1;
-                    return articulo;
+            let articulosMap = articulosCarrito.map(item => {
+                if(item.title === articulo.children[1].textContent){
+                    item.count = item.count - 1;
+                    return item;
                 }else{
-                    return articulo;
+                    return item;
                 }
             });
-            articulosCarrito = [...items];
+            articulosCarrito = [...articulosMap];
         }else{
             let items = articulosCarrito.filter(item => {
                 return item.title !== articulo.children[1].textContent;
