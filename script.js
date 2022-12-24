@@ -116,6 +116,14 @@ function showItemsCarrito(){
 
         itemsCarrito.appendChild(div);
     });
+    totalCarrito();
+
+}
+function totalCarrito(){
+    const total = articulosCarrito.reduce((acumulador, item) => {
+        return acumulador + (item.count * Number(item.price.slice(1)));
+    }, 0);
+    countTotalCarrito.textContent = `$${total}`;
 }
 function toggleDesktopMenu(){
     desktopMenu.classList.toggle('inactive');
